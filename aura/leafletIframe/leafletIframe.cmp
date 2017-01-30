@@ -1,0 +1,62 @@
+<aura:component controller="MapController" implements="flexipage:availableForAllPageTypes" access="global" >
+    <aura:attribute name='recordId' type="String"/>
+    <aura:attribute name="addressField" type="String" access="global" default="Address"/>
+    <aura:attribute name="recordName" type="String"/>
+    <aura:attribute name="shouldShowMap" type="Boolean" default="false"/>
+    <aura:attribute name="recordAddress" type="String"/>
+    <aura:attribute name="currentMarker" type="Object"/>
+    <aura:attribute name="showEmpty" type="Boolean" default="false"/>
+    <aura:attribute name="errorMessage" type="String"/>
+    <aura:attribute name="googleMapUrl" type="String"/>
+    <aura:attribute name="isMapInitialized" type="Boolean" default="false"/>
+    <aura:handler event="ltng:selectSObject" action="{!c.recordSelected}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+
+    <div class="slds" style="overflow: auto;">
+        <div class="slds-box">
+            <div class="ld-ic-spinner-container">
+                <div class="slds-grid" aura:id="icon">
+                    <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <img src="/resource/customicons/components/map.png" class="slds-icon slds-icon--small" alt="Map" />
+                        </div>
+                        <div class="slds-media__body slds-truncate">
+                            <span class="slds-text-heading--small">{!v.recordName}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-container--center slds-container--large slds-p-vertical--small slds-m-around--medium ld-m-height" aura:id='spinner'>
+                    <div class="slds-spinner slds-spinner slds-spinner--small" aria-hidden="false" role="alert">
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+                <div class="slds-p-top--medium">
+                    <div aura:id="shouldShowMap" class="{!v.shouldShowMap == false ? 'ld-m-hide-map-content map-container' : 'map-container ld-m-canvas'}">
+                        <iframe height="250px" style="width: 100%;" aura:id="leaflet-iframe" src="/apex/leaflet"></iframe>
+                    </div>
+
+                    <div class="slds-p-top--medium">
+                        <aura:if isTrue="{!v.showEmpty}">
+                            <div class="slds-box ld-m-canvas slds-align--absolute-center">
+                                <div class="slds-text-align--center slds-text-heading--small">
+                                    <c:svg ariaHidden="true" class="slds-icon slds-icon--small slds-icon-text-default" xlinkHref="/resource/icons/utility-sprite/svg/symbols.svg#checkin"></c:svg>
+                                    <span class="slds-assistive-text">Location Icon</span>
+                                    <div class="slds-m-top--x-small">No information to display
+                                        <aura:if isTrue="{!v.errorMessage}">
+                                            {!v.errorMessage}
+                                        </aura:if>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </div>
+                    <div class="slds-text-body--small page-header__info" aura:id="address">
+                        <a onclick="{!c.clickAddress}">{!v.recordAddress}<span class="slds-assistive-text">{!v.recordAddress}</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

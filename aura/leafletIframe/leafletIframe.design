@@ -1,0 +1,3 @@
+<design:component label="Map in iframe">
+	<design:attribute name="addressField" label="Address Field" description="API Name of the field that will determine which location to be displayed." />
+</design:component>

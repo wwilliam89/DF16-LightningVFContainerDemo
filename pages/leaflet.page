@@ -1,0 +1,56 @@
+<apex:page sidebar="false" showHeader="false">
+    <script type="text/javascript" src="{!URLFOR($Resource.leaflet, '/leaflet.js')}"/>
+    <link href= "{!URLFOR($Resource.leaflet, '/leaflet.css')}" rel="stylesheet" type="text/css" />
+
+    <style>
+        .map-container {
+            height: 250px;
+
+        }
+    </style>
+
+    <div class="slds">
+        <div id="map" class="map-container">
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var map;
+        var marker;
+        window.addEventListener('message', receiveMessage, false);
+
+        function receiveMessage(event) {
+            if (event && event.data) {
+                var addressCoords = event.data;
+
+                if (typeof marker !== 'undefined' && marker !== null) {
+                    map.removeLayer(marker);
+                }
+
+                map.panTo([addressCoords.lat, addressCoords.long]);
+
+                marker = L.marker([addressCoords.lat, addressCoords.long]).addTo(map);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+            //do work
+            map = new L.map('map', {
+                zoomControl: false
+            }).setView([37.784173, -122.401557], 14);
+
+
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles © Esri'
+            }).addTo(map);
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+
+            map.whenReady(function() {
+                window.parent.postMessage('map init complete', '*');
+            });
+        });
+    </script>
+</apex:page>
